@@ -7,11 +7,9 @@ Key features implemented:
     ✔ AdamW optimizer + CosineAnnealingLR scheduler
     ✔ Saves best checkpoint by validation loss
     ✔ Computes AUC-ROC, Sensitivity, Specificity, F1, CM, ROC curve
-    ✔ Exports training history as JSON
+    ✔ Exports training history as JSON """
 
-Usage:
-    python train.py
-"""
+
 
 import os
 import json
@@ -24,10 +22,7 @@ from model import build_efficientnet_b0
 from dataset import get_loaders
 from utils import compute_metrics, set_seed
 
-
-# ═══════════════════════════════════════════════════════════════════════════════
 #  Epoch-level helpers
-# ═══════════════════════════════════════════════════════════════════════════════
 
 def train_one_epoch(
     model    : nn.Module,
@@ -102,10 +97,7 @@ def evaluate(
 
     return total_loss / n_samples, correct / n_samples, all_labels, all_preds, all_probs
 
-
-# ═══════════════════════════════════════════════════════════════════════════════
 #  Main training loop
-# ═══════════════════════════════════════════════════════════════════════════════
 
 def main():
     cfg = Config()
@@ -116,12 +108,12 @@ def main():
 
     print(f"Using device: {cfg.DEVICE}\n")
 
-    # ── Data ──────────────────────────────────────────────────────────
+    # Data 
     train_loader, test_loader, classes = get_loaders(
         cfg.TRAIN_DIR, cfg.TEST_DIR, cfg.BATCH_SIZE, cfg.IMG_SIZE
     )
 
-    # ── Model + Optimizer + Scheduler ─────────────────────────────────
+    # ── Model + Optimizer + Scheduler 
     model = build_efficientnet_b0(pretrained=True, num_classes=cfg.NUM_CLASSES)
     model = model.to(cfg.DEVICE)
 
@@ -137,7 +129,7 @@ def main():
         eta_min = cfg.ETA_MIN,
     )
 
-    # ── Training loop ─────────────────────────────────────────────────
+    # ── Training loop 
     best_val_loss = float("inf")
     history       = []
 
@@ -171,7 +163,7 @@ def main():
             "lr"         : round(current_lr, 8),
         })
 
-        # ── Save best model checkpoint by val_loss ─────────────────────
+        # ── Save best model checkpoint by val_loss
         if val_loss < best_val_loss:
             best_val_loss = val_loss
             torch.save(
@@ -192,13 +184,13 @@ def main():
             )
             print(f"  ✔ Best model saved  → val_loss: {val_loss:.4f}")
 
-    # ── Final evaluation ──────────────────────────────────────────────
+    # ── Final evaluation 
     print("\n" + "=" * 70)
     print("  Final evaluation on test set (best checkpoint)")
     print("=" * 70)
 
     # Reload best weights for final metrics
-    checkpoint = torch.load(cfg.BEST_MODEL_PATH, map_location=cfg.DEVICE)
+    checkpoint = torch.load(cfg.BEST_MODEL_PATH, map_location=torch.device('cpu'))
     model.load_state_dict(checkpoint["model_state_dict"])
 
     _, _, y_true, y_pred, y_prob = evaluate(model, test_loader, criterion, cfg.DEVICE)
@@ -207,7 +199,7 @@ def main():
     print("\nTest set metrics:")
     print(json.dumps({k: v for k, v in metrics.items() if k != "confusion_matrix"}, indent=2))
 
-    # ── Save training history ─────────────────────────────────────────
+    # ── Save training history 
     with open(os.path.join(cfg.RESULTS_DIR, "history.json"), "w") as f:
         json.dump(history, f, indent=2)
 

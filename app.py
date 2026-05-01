@@ -27,6 +27,39 @@ from config import Config
 from model import build_efficientnet_b0
 from utils import GradCAM, overlay_gradcam
 
+import os
+
+#st.write("Current dir:", os.getcwd())
+#st.write("Files here:", os.listdir("."))
+#st.write("Checkpoints:", os.listdir("checkpoints") if os.path.exists("checkpoints") else "NOT FOUND")
+
+CHECKPOINT_PATH = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    "checkpoints",
+    "best_model.pth"
+)
+
+def load_model():
+    # Step 1: Check file exists
+    if not os.path.exists(CHECKPOINT_PATH):
+        st.warning(f"⚠️ No checkpoint found at: {CHECKPOINT_PATH}")
+        st.stop()
+
+    try:
+        # Step 2: Load with CPU map (critical for Streamlit Cloud)
+        checkpoint = torch.load(
+            CHECKPOINT_PATH,
+            map_location=torch.device('cpu')
+        )
+        
+        # Step 3: Load weights
+        model.load_state_dict(checkpoint['model_state_dict'])
+        model.eval()
+        return model
+
+    except Exception as e:
+        st.error(f"❌ Model loading failed: {e}")
+        st.stop()
 
 # ═══════════════════════════════════════════════════════════════════════════════
 #  Page Configuration
