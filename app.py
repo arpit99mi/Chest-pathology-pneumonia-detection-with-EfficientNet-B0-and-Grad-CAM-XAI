@@ -345,17 +345,8 @@ def render_sidebar(eval_results, checkpoint_meta):
             m1.metric("Sensitivity", f"{eval_results['sensitivity']:.3f}")
             m2.metric("Specificity", f"{eval_results['specificity']:.3f}")
 
-        st.markdown("---")
-        st.markdown("### 🗂 Data Structure")
-        st.code("""data/
-├── train/
-│   ├── Normal/
-│   └── Pneumonia/
-└── test/
-    ├── Normal/
-    └── Pneumonia/""", language="text")
 
-        st.markdown('<div class="warning-banner">⚕️ <b>Disclaimer:</b> For research & educational purposes only. Not a medical device.</div>',
+st.markdown('<div class="warning-banner">⚕️ <b>Disclaimer:</b> For research & educational purposes only. Not a medical device.</div>',
                     unsafe_allow_html=True)
 
 
