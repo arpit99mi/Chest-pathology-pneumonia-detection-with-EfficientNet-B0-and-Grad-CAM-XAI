@@ -10,11 +10,8 @@ env/
 
 # Model checkpoints (large files)
 checkpoints/*.pth
-checkpoints/*.pt
+checkpoints/*.pth
 
-# Results
-results/*.png
-results/*.json
 
 # Data
 data/train/
