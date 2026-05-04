@@ -2,7 +2,7 @@
 
 > **Model Card version:** 1.0.0  
 > **Last updated:** 2026  
-> **Prepared by:** [Arpit Mishra / Data Scientist]
+> **Prepared by:** [Arpit Mishra / Rupesh Mishra / Aanchal Gupta]
 
 ---
 
